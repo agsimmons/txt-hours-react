@@ -17,20 +17,68 @@ type TaskDurationMap = Map<string, Temporal.Duration>;
 type TaskIndexedTaskDurations = Map<string, DateDurationMap>;
 type DateDurationMap = Map<Temporal.PlainDate, Temporal.Duration>;
 
+type ValidatedData = {
+  dates: Temporal.PlainDate[];
+  taskNames: string[];
+  taskIndexedTaskDurations: TaskIndexedTaskDurations;
+};
+
 const MIDNIGHT = new Temporal.PlainTime(0, 0);
 const NOON = new Temporal.PlainTime(12, 0);
 const ANCHOR_DATE = new Temporal.PlainDate(2000, 1, 1);
 
+type ResultTableProps = {
+  validatedData: ValidatedData;
+};
+
+function ResultTable({ validatedData }: ResultTableProps) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          {validatedData.dates.map((date) => (
+            <th key={date.toString()} scope="col">
+              {date.toString()}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {validatedData.taskNames.map((taskName) => (
+          <tr key={taskName}>
+            <th scope="row">{taskName}</th>
+            {validatedData.dates.map((date) => (
+              <td key={date.toString()}>
+                {validatedData.taskIndexedTaskDurations
+                  .get(taskName)
+                  ?.get(date) !== undefined
+                  ? Number(
+                      validatedData.taskIndexedTaskDurations
+                        .get(taskName)
+                        ?.get(date)
+                        ?.total({ unit: "hours" })
+                    ).toFixed(2)
+                  : ""}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function App() {
   const textInputRef = useRef<HTMLTextAreaElement | null>(null);
-  const resultTableRef = useRef<HTMLTableElement | null>(null);
 
-  const [dates, setDates] = useState<Temporal.PlainDate[]>([]);
-  const [taskNames, setTaskNames] = useState<string[]>([]);
-  const [validTaskIndexedTaskDurations, setValidTaskIndexedTaskDurations] =
-    useState<TaskIndexedTaskDurations | null>(null);
+  const [validatedData, setValidatedData] = useState<ValidatedData | null>(
+    null
+  );
 
   const processData = () => {
+    setValidatedData(null);
+
     if (textInputRef.current === null) return;
 
     const dayBlocks: DayBlock[] = [];
@@ -83,8 +131,6 @@ function App() {
       });
     }
 
-    console.log(JSON.stringify(dayBlocks, null, 2));
-
     const dateIndexedTaskDurations: DateIndexedTaskDurations = new Map();
 
     for (const dayBlock of dayBlocks) {
@@ -103,9 +149,6 @@ function App() {
 
       dateIndexedTaskDurations.set(dayBlock.date, taskDurationMap);
     }
-    console.log("a");
-    console.log(dateIndexedTaskDurations);
-    console.log("b");
 
     const taskIndexedTaskDurations: TaskIndexedTaskDurations = new Map();
 
@@ -128,28 +171,15 @@ function App() {
       }
     }
 
-    console.log(taskIndexedTaskDurations);
-
-    for (const [taskName, dateDurationMap] of taskIndexedTaskDurations) {
-      console.log(taskName);
-      for (const [date, duration] of dateDurationMap) {
-        console.log(`${date.toString()}: ${duration.toString()}`);
-      }
-      console.log();
-    }
-
-    setDates(
-      Array.from(dateIndexedTaskDurations.keys()).sort(
-        Temporal.PlainDate.compare
-      )
-    );
-    setTaskNames(
-      Array.from(taskIndexedTaskDurations.keys())
-        .sort
-        // String.prototype.localeCompare
-        ()
-    );
-    setValidTaskIndexedTaskDurations(taskIndexedTaskDurations);
+    setValidatedData({
+      dates: Array.from(dateIndexedTaskDurations.keys()).sort((one, two) =>
+        Temporal.PlainDate.compare(one, two)
+      ),
+      taskNames: Array.from(taskIndexedTaskDurations.keys()).sort((one, two) =>
+        one.localeCompare(two)
+      ),
+      taskIndexedTaskDurations: taskIndexedTaskDurations,
+    });
   };
 
   return (
@@ -159,36 +189,7 @@ function App() {
       <button type="button" onClick={processData}>
         Submit
       </button>
-      <table ref={resultTableRef}>
-        <thead>
-          <tr>
-            <th scope="col"></th>
-            {dates.map((date) => (
-              <th scope="col">{date.toString()}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {taskNames.map((taskName) => (
-            <tr>
-              <th scope="row">{taskName}</th>
-              {dates.map((date) => (
-                <td>
-                  {validTaskIndexedTaskDurations?.get(taskName)?.get(date) !==
-                  undefined
-                    ? Number(
-                        validTaskIndexedTaskDurations
-                          ?.get(taskName)
-                          ?.get(date)
-                          ?.total({ unit: "hours" })
-                      ).toFixed(2)
-                    : ""}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {validatedData && <ResultTable validatedData={validatedData} />}
     </>
   );
 }
