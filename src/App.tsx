@@ -23,8 +23,6 @@ type ValidatedData = {
   taskIndexedTaskDurations: TaskIndexedTaskDurations;
 };
 
-const MIDNIGHT = new Temporal.PlainTime(0, 0);
-const NOON = new Temporal.PlainTime(12, 0);
 const ANCHOR_DATE = new Temporal.PlainDate(2000, 1, 1);
 
 type ResultTableProps = {
@@ -94,7 +92,7 @@ function App() {
         const startTimeString = timeEntryLine.split(" - ")[0];
         const [startTimeHourString, startTimeMinuteString] =
           startTimeString.split(":");
-        let startTime = new Temporal.PlainTime(
+        const startTime = new Temporal.PlainTime(
           parseInt(startTimeHourString),
           parseInt(startTimeMinuteString)
         );
@@ -109,9 +107,7 @@ function App() {
 
         const taskName = timeEntryLine.split(" - ")[1].split(" : ")[1];
 
-        if (startTime == NOON && endTime == NOON) {
-          startTime = MIDNIGHT;
-        } else if (Temporal.PlainTime.compare(endTime, startTime) <= 0) {
+        if (Temporal.PlainTime.compare(endTime, startTime) < 0) {
           endTime = endTime.add({ hours: 12 });
         }
 
