@@ -373,7 +373,7 @@ function App() {
       case "help":
         return <HelpGuide onReturnToInput={() => setUIState("input")} />;
       case "error":
-        return <p>TODO: Error State</p>;
+        return <ErrorDisplay message="TODO: Error State" />;
       case "result":
         return (
           validatedData && (
