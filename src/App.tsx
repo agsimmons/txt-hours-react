@@ -298,6 +298,58 @@ function HelpGuide({ onReturnToInput }: HelpGuideProps) {
           https://github.com/agsimmons/txt-hours-react
         </a>
       </p>
+
+      <p>A complete example of a txt-hours document can be seen below</p>
+
+      <pre>
+        {`
+2025-08-25
+9:00 - 9:20 : Task 1
+9:20 - 9:50 : Task 2
+9:50 - 10:30 : Task 3
+10:30 - 11:00 : Task 4
+11:00 - 11:20 : Task 3
+11:20 - 12:15 : Task 5
+12:15 - 12:25 : Task 6
+12:25 - 12:35 : Task 7
+12:35 - 3:50 : Task 8
+3:50 - 4:10 : Task 9
+4:10 - 4:30 : Task 2
+4:30 - 5:10 : Task 3
+5:10 - 5:20 : Task 9
+6:00 - 6:40 : Task 2
+
+2025-08-26
+8:35 - 9:00 : Task 2
+9:00 - 9:10 : Task 13
+9:10 - 9:45 : Task 7
+9:45 - 11:00 : Task 4
+11:00 - 11:23 : Task 10
+11:23 - 12:00 : Task 4
+12:00 - 12:20 : Task 8
+12:20 - 12:50 : Task 9
+12:50 - 1:05 : Task 5
+1:05 - 2:00 : Task 11
+2:00 - 3:30 : Task 12
+3:30 - 3:45 : Task 13
+3:45 - 4:30 : Task 11
+4:30 - 5:10 : Task 3
+
+2025-08-27
+9:00 - 10:00 : Task 13
+10:00 - 10:45 : Task 14
+10:45 - 11:00 : Task 13
+11:00 - 12:00 : Task 3
+12:00 - 12:30 : Task 6
+12:30 - 1:00 : Task 4
+1:00 - 1:30 : Task 9
+1:30 - 1:45 : Task 15
+1:45 - 2:15 : Task 6
+2:15 - 3:00 : Task 3
+2:30 - 3:00 : Task 4
+3:00 - 4:30 : Task 16
+4:30 - 5:00 : Task 13`}
+      </pre>
     </>
   );
 }

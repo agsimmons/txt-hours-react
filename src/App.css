@@ -22,3 +22,8 @@ th[scope="row"] {
 td {
   text-align: center;
 }
+
+p {
+  max-width: 80rem;
+  margin-bottom: 1rem;
+}
