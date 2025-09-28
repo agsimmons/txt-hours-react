@@ -9,6 +9,9 @@ import { DataEntry } from "./components/DataEntry";
 function App() {
   const [uiState, setUIState] = useState<UIState>("input");
 
+  const [inputText, setInputText] = useState<string>("");
+  const [errorText, setErrorText] = useState<string>("");
+
   const [validatedData, setValidatedData] = useState<ValidatedData | null>(
     null
   );
@@ -18,14 +21,16 @@ function App() {
       case "input":
         return (
           <DataEntry
-            setValidatedData={setValidatedData}
             setUIState={setUIState}
+            inputText={inputText}
+            setInputText={setInputText}
+            setValidatedData={setValidatedData}
           />
         );
       case "help":
         return <HelpGuide onReturnToInput={() => setUIState("input")} />;
       case "error":
-        return <ErrorDisplay message="TODO: Error State" />;
+        return <ErrorDisplay message={errorText} />;
       case "result":
         return (
           validatedData && (
@@ -38,7 +43,7 @@ function App() {
       default:
         return null;
     }
-  }, [uiState, validatedData]);
+  }, [uiState, inputText, errorText, validatedData]);
 
   return (
     <>

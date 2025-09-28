@@ -1,4 +1,4 @@
-import { useRef, type SetStateAction, type Dispatch } from "react";
+import { type SetStateAction, type Dispatch } from "react";
 import { Temporal } from "temporal-polyfill";
 import type {
   DateIndexedTaskDurations,
@@ -13,21 +13,24 @@ import { evaluate } from "../syntax/parser";
 const ANCHOR_DATE = new Temporal.PlainDate(2000, 1, 1);
 
 type DataEntryProps = {
-  setValidatedData: Dispatch<SetStateAction<ValidatedData | null>>;
   setUIState: Dispatch<SetStateAction<UIState>>;
+  inputText: string;
+  setInputText: Dispatch<SetStateAction<string>>;
+  setValidatedData: Dispatch<SetStateAction<ValidatedData | null>>;
 };
 
-export function DataEntry({ setValidatedData, setUIState }: DataEntryProps) {
-  const textInputRef = useRef<HTMLTextAreaElement | null>(null);
-
+export function DataEntry({
+  setUIState,
+  inputText,
+  setInputText,
+  setValidatedData,
+}: DataEntryProps) {
   const processData = () => {
     setValidatedData(null);
 
-    if (textInputRef.current === null) return;
-
     let file: FileAST;
     try {
-      file = evaluate(textInputRef.current.value);
+      file = evaluate(inputText);
     } catch (error) {
       alert(error);
       return;
@@ -87,13 +90,15 @@ export function DataEntry({ setValidatedData, setUIState }: DataEntryProps) {
       taskIndexedTaskDurations: taskIndexedTaskDurations,
     });
     setUIState("result");
-
-    // TODO: Handle errors
   };
 
   return (
     <>
-      <textarea ref={textInputRef} style={{ width: "100%", height: "75vh" }} />
+      <textarea
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        style={{ width: "100%", height: "75vh" }}
+      />
       <button type="button" onClick={processData}>
         Submit
       </button>
