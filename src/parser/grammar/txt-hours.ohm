@@ -1,0 +1,23 @@
+TXTHours {
+    File                 = Entry+
+
+    Entry                = Date #newline TimeEntry+ #newline?
+
+    Date                 = Year "-" Month "-" Day
+
+    Year (year)          = digit digit digit digit
+    Month (month)        = digit digit
+    Day (day)            = digit digit
+
+    TimeEntry            = TimeRange ":" TaskName #newline?
+
+    TimeRange            = Time "-" Time
+    Time                 = Hour ":" Minute
+
+    Hour (hour)          = digit digit
+    Minute (minute)      = digit digit
+
+    TaskName (task name) = #(~newline any)+
+
+    newline              = "\n"
+}

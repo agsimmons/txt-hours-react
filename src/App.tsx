@@ -6,18 +6,11 @@ import {
   type Dispatch,
 } from "react";
 import { Temporal } from "temporal-polyfill";
-import "./App.css";
+import "./assets/App.css";
+import { evaluate } from "./parser/parser";
+import type { FileAST } from "./types";
 
 type UIState = "input" | "help" | "error" | "result";
-
-type DayBlock = {
-  date: Temporal.PlainDate;
-  timeEntries: TimeEntry[];
-};
-type TimeEntry = {
-  taskName: string;
-  duration: Temporal.Duration;
-};
 
 type DateIndexedTaskDurations = Map<Temporal.PlainDate, TaskDurationMap>;
 type TaskDurationMap = Map<string, Temporal.Duration>;
@@ -102,71 +95,35 @@ function DataEntry({ setValidatedData, setUIState }: DataEntryProps) {
 
     if (textInputRef.current === null) return;
 
-    const dayBlocks: DayBlock[] = [];
-
-    for (const dayBlockData of textInputRef.current.value.split("\n\n")) {
-      const [dateLine, ...timeLines] = dayBlockData.split("\n");
-
-      const date = Temporal.PlainDate.from(dateLine);
-
-      const timeEntries: TimeEntry[] = [];
-
-      for (const timeEntryLine of timeLines) {
-        const startTimeString = timeEntryLine.split(" - ")[0];
-        const [startTimeHourString, startTimeMinuteString] =
-          startTimeString.split(":");
-        const startTime = new Temporal.PlainTime(
-          parseInt(startTimeHourString),
-          parseInt(startTimeMinuteString)
-        );
-
-        const endTimeString = timeEntryLine.split(" - ")[1].split(" : ")[0];
-        const [endTimeHourString, endTimeMinuteString] =
-          endTimeString.split(":");
-        let endTime = new Temporal.PlainTime(
-          parseInt(endTimeHourString),
-          parseInt(endTimeMinuteString)
-        );
-
-        const taskName = timeEntryLine.split(" - ")[1].split(" : ")[1];
-
-        if (Temporal.PlainTime.compare(endTime, startTime) < 0) {
-          endTime = endTime.add({ hours: 12 });
-        }
-
-        const duration = ANCHOR_DATE.toPlainDateTime(endTime).since(
-          ANCHOR_DATE.toPlainDateTime(startTime)
-        );
-
-        timeEntries.push({
-          taskName,
-          duration,
-        });
-      }
-
-      dayBlocks.push({
-        date,
-        timeEntries,
-      });
+    let file: FileAST;
+    try {
+      file = evaluate(textInputRef.current.value);
+    } catch (error) {
+      alert(error);
+      return;
     }
 
     const dateIndexedTaskDurations: DateIndexedTaskDurations = new Map();
 
-    for (const dayBlock of dayBlocks) {
+    for (const entry of file) {
       const taskDurationMap: TaskDurationMap = new Map();
 
-      for (const timeEntry of dayBlock.timeEntries) {
-        if (!taskDurationMap.has(timeEntry.taskName)) {
-          taskDurationMap.set(timeEntry.taskName, timeEntry.duration);
+      for (const timeEntry of entry.entries) {
+        const duration = ANCHOR_DATE.toPlainDateTime(timeEntry.end).since(
+          ANCHOR_DATE.toPlainDateTime(timeEntry.start)
+        );
+
+        if (!taskDurationMap.has(timeEntry.task)) {
+          taskDurationMap.set(timeEntry.task, duration);
         } else {
           taskDurationMap.set(
-            timeEntry.taskName,
-            taskDurationMap.get(timeEntry.taskName)!.add(timeEntry.duration)
+            timeEntry.task,
+            taskDurationMap.get(timeEntry.task)!.add(duration)
           );
         }
       }
 
-      dateIndexedTaskDurations.set(dayBlock.date, taskDurationMap);
+      dateIndexedTaskDurations.set(entry.date, taskDurationMap);
     }
 
     const taskIndexedTaskDurations: TaskIndexedTaskDurations = new Map();
