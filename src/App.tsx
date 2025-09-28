@@ -10,7 +10,7 @@ function App() {
   const [uiState, setUIState] = useState<UIState>("input");
 
   const [inputText, setInputText] = useState<string>("");
-  const [errorText, setErrorText] = useState<string>("");
+  const [errorText, _setErrorText] = useState<string>("");
 
   const [validatedData, setValidatedData] = useState<ValidatedData | null>(
     null
