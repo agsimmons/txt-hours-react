@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build-grammar": "ohm generateBundles --esm --withTypes src/parser/grammar/txt-hours.ohm",
+    "build-grammar": "ohm generateBundles --esm --withTypes src/syntax/grammar/txt-hours.ohm",
     "build": "npm run build-grammar && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

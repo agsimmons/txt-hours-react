@@ -21,7 +21,7 @@ export interface TXTHoursActionDict<T> extends BaseActionDict<T> {
   TimeEntry?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode, arg3: IterationNode) => T;
   TimeRange?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode) => T;
   Time?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode) => T;
-  Hour?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
+  Hour?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
   Minute?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode) => T;
   TaskName?: (this: NonterminalNode, arg0: IterationNode) => T;
   newline?: (this: NonterminalNode, arg0: TerminalNode) => T;

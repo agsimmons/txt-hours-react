@@ -14,7 +14,7 @@ TXTHours {
     TimeRange            = Time "-" Time
     Time                 = Hour ":" Minute
 
-    Hour (hour)          = digit digit
+    Hour (hour)          = digit digit?
     Minute (minute)      = digit digit
 
     TaskName (task name) = #(~newline any)+
