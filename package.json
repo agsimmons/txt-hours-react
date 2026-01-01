@@ -7,6 +7,7 @@
     "dev": "vite",
     "build-grammar": "ohm generateBundles --esm --withTypes src/syntax/grammar/txt-hours.ohm",
     "build": "npm run build-grammar && tsc -b && vite build",
+    "format": "prettier -w .",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -29,6 +30,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-plugin-react-x": "^1.52.9",
     "globals": "^16.4.0",
+    "prettier": "^3.7.4",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.44.1",
     "vite": "^7.1.7"

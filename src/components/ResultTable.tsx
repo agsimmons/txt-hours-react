@@ -1,14 +1,11 @@
-import type { ValidatedData } from "../types";
+import type { ValidatedData } from "../types"
 
 type ResultTableProps = {
-  validatedData: ValidatedData;
-  onReturnToInput: () => void;
-};
+  validatedData: ValidatedData
+  onReturnToInput: () => void
+}
 
-export function ResultTable({
-  validatedData,
-  onReturnToInput,
-}: ResultTableProps) {
+export function ResultTable({ validatedData, onReturnToInput }: ResultTableProps) {
   return (
     <>
       <button type="button" onClick={onReturnToInput}>
@@ -31,14 +28,12 @@ export function ResultTable({
               <th scope="row">{taskName}</th>
               {validatedData.dates.map((date) => (
                 <td key={date.toString()}>
-                  {validatedData.taskIndexedTaskDurations
-                    .get(taskName)
-                    ?.get(date) !== undefined
+                  {validatedData.taskIndexedTaskDurations.get(taskName)?.get(date) !== undefined
                     ? Number(
                         validatedData.taskIndexedTaskDurations
                           .get(taskName)
                           ?.get(date)
-                          ?.total({ unit: "hours" })
+                          ?.total({ unit: "hours" }),
                       ).toFixed(2)
                     : ""}
                 </td>
@@ -48,5 +43,5 @@ export function ResultTable({
         </tbody>
       </table>
     </>
-  );
+  )
 }

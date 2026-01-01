@@ -1,20 +1,19 @@
-import { useState, useMemo } from "react";
-import "./assets/App.css";
-import type { UIState, ValidatedData } from "./types";
-import { HelpGuide } from "./components/HelpGuide";
-import { ErrorDisplay } from "./components/ErrorDisplay";
-import { ResultTable } from "./components/ResultTable";
-import { DataEntry } from "./components/DataEntry";
+import { useState, useMemo } from "react"
+
+import "./assets/App.css"
+import { DataEntry } from "./components/DataEntry"
+import { ErrorDisplay } from "./components/ErrorDisplay"
+import { HelpGuide } from "./components/HelpGuide"
+import { ResultTable } from "./components/ResultTable"
+import type { UIState, ValidatedData } from "./types"
 
 function App() {
-  const [uiState, setUIState] = useState<UIState>("input");
+  const [uiState, setUIState] = useState<UIState>("input")
 
-  const [inputText, setInputText] = useState<string>("");
-  const [errorText, _setErrorText] = useState<string>("");
+  const [inputText, setInputText] = useState<string>("")
+  const [errorText, _setErrorText] = useState<string>("")
 
-  const [validatedData, setValidatedData] = useState<ValidatedData | null>(
-    null
-  );
+  const [validatedData, setValidatedData] = useState<ValidatedData | null>(null)
 
   const pageContents = useMemo((): React.JSX.Element | null => {
     switch (uiState) {
@@ -26,11 +25,11 @@ function App() {
             setInputText={setInputText}
             setValidatedData={setValidatedData}
           />
-        );
+        )
       case "help":
-        return <HelpGuide onReturnToInput={() => setUIState("input")} />;
+        return <HelpGuide onReturnToInput={() => setUIState("input")} />
       case "error":
-        return <ErrorDisplay message={errorText} />;
+        return <ErrorDisplay message={errorText} />
       case "result":
         return (
           validatedData && (
@@ -39,11 +38,11 @@ function App() {
               onReturnToInput={() => setUIState("input")}
             />
           )
-        );
+        )
       default:
-        return null;
+        return null
     }
-  }, [uiState, inputText, errorText, validatedData]);
+  }, [uiState, inputText, errorText, validatedData])
 
   return (
     <>
@@ -55,7 +54,7 @@ function App() {
       )}
       {pageContents}
     </>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -1,7 +1,7 @@
 type ErrorDisplayProps = {
-  message: string;
-};
+  message: string
+}
 
 export function ErrorDisplay({ message }: ErrorDisplayProps) {
-  return <p>{message}</p>;
+  return <p>{message}</p>
 }
