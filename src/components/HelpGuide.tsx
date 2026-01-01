@@ -1,8 +1,7 @@
 type HelpGuideProps = {
   onReturnToInput: () => void
 }
-
-export function HelpGuide({ onReturnToInput }: HelpGuideProps) {
+function HelpGuide({ onReturnToInput }: HelpGuideProps) {
   return (
     <>
       <h2>Help</h2>
@@ -128,3 +127,5 @@ export function HelpGuide({ onReturnToInput }: HelpGuideProps) {
     </>
   )
 }
+
+export default HelpGuide

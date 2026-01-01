@@ -13,16 +13,9 @@ export type TimeEntryAST = {
   task: string
 }
 
-export type DateIndexedTaskDurations = Map<Temporal.PlainDate, TaskDurationMap>
-export type TaskDurationMap = Map<string, Temporal.Duration>
-
-export type TaskIndexedTaskDurations = Map<string, DateDurationMap>
-type DateDurationMap = Map<Temporal.PlainDate, Temporal.Duration>
-
-export type ValidatedData = {
-  dates: Temporal.PlainDate[]
-  taskNames: string[]
-  taskIndexedTaskDurations: TaskIndexedTaskDurations
+export type TaskEntry = {
+  task: string
+  durations: Map<string, Temporal.Duration>
 }
 
 export type UIState = "input" | "help" | "error" | "result"

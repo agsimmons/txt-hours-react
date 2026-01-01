@@ -2,6 +2,8 @@ type ErrorDisplayProps = {
   message: string
 }
 
-export function ErrorDisplay({ message }: ErrorDisplayProps) {
+function ErrorDisplay({ message }: ErrorDisplayProps) {
   return <p>{message}</p>
 }
+
+export default ErrorDisplay

@@ -2,29 +2,25 @@ import { type SetStateAction, type Dispatch } from "react"
 import { Temporal } from "temporal-polyfill"
 
 import { evaluate } from "../syntax/parser"
-import type {
-  DateIndexedTaskDurations,
-  FileAST,
-  TaskDurationMap,
-  TaskIndexedTaskDurations,
-  UIState,
-  ValidatedData,
-} from "../types"
+import type { FileAST, TaskEntry, UIState } from "../types"
 
 const ANCHOR_DATE = new Temporal.PlainDate(2000, 1, 1)
+
+type TaskDurations = Map<string, Temporal.Duration>
+type TaskNameToDuration = Map<string, TaskDurations>
 
 type DataEntryProps = {
   setUIState: Dispatch<SetStateAction<UIState>>
   inputText: string
   setInputText: Dispatch<SetStateAction<string>>
-  setValidatedData: Dispatch<SetStateAction<ValidatedData | null>>
+  setTasks: Dispatch<SetStateAction<TaskEntry[] | null>>
 }
 
-export function DataEntry({
+function DataEntry({
   setUIState,
   inputText,
   setInputText,
-  setValidatedData,
+  setTasks: setValidatedData,
 }: DataEntryProps) {
   const processData = () => {
     setValidatedData(null)
@@ -37,53 +33,36 @@ export function DataEntry({
       return
     }
 
-    const dateIndexedTaskDurations: DateIndexedTaskDurations = new Map()
+    const taskNamesToDuration: TaskNameToDuration = new Map()
 
     for (const entry of file) {
-      const taskDurationMap: TaskDurationMap = new Map()
-
       for (const timeEntry of entry.entries) {
+        if (!taskNamesToDuration.has(timeEntry.task)) {
+          taskNamesToDuration.set(timeEntry.task, new Map())
+        }
+
+        const _taskDurations = taskNamesToDuration.get(timeEntry.task)!
+
         const duration = ANCHOR_DATE.toPlainDateTime(timeEntry.end).since(
           ANCHOR_DATE.toPlainDateTime(timeEntry.start),
         )
 
-        if (!taskDurationMap.has(timeEntry.task)) {
-          taskDurationMap.set(timeEntry.task, duration)
-        } else {
-          taskDurationMap.set(timeEntry.task, taskDurationMap.get(timeEntry.task)!.add(duration))
-        }
-      }
-
-      dateIndexedTaskDurations.set(entry.date, taskDurationMap)
-    }
-
-    const taskIndexedTaskDurations: TaskIndexedTaskDurations = new Map()
-
-    for (const [date, taskDurationMap] of dateIndexedTaskDurations) {
-      for (const [taskName, duration] of taskDurationMap) {
-        if (!taskIndexedTaskDurations.has(taskName)) {
-          taskIndexedTaskDurations.set(taskName, new Map())
-        }
-
-        if (!taskIndexedTaskDurations.get(taskName)!.has(date)) {
-          taskIndexedTaskDurations.get(taskName)!.set(date, duration)
-        } else {
-          taskIndexedTaskDurations
-            .get(taskName)!
-            .set(date, taskIndexedTaskDurations.get(taskName)!.get(date)!.add(duration))
-        }
+        _taskDurations.set(entry.date.toString(), duration)
       }
     }
 
-    setValidatedData({
-      dates: Array.from(dateIndexedTaskDurations.keys()).sort((one, two) =>
-        Temporal.PlainDate.compare(one, two),
-      ),
-      taskNames: Array.from(taskIndexedTaskDurations.keys()).sort((one, two) =>
-        one.localeCompare(two),
-      ),
-      taskIndexedTaskDurations: taskIndexedTaskDurations,
-    })
+    const tasks: TaskEntry[] = []
+
+    for (const [taskName, durations] of taskNamesToDuration.entries()) {
+      tasks.push({
+        task: taskName,
+        durations: durations,
+      })
+    }
+
+    // TODO: Sort tasks by name
+
+    setValidatedData(tasks)
     setUIState("result")
   }
 
@@ -100,3 +79,5 @@ export function DataEntry({
     </>
   )
 }
+
+export default DataEntry

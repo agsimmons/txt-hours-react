@@ -1,19 +1,20 @@
 import { useState, useMemo } from "react"
 
 import "./assets/App.css"
-import { DataEntry } from "./components/DataEntry"
-import { ErrorDisplay } from "./components/ErrorDisplay"
-import { HelpGuide } from "./components/HelpGuide"
-import { ResultTable } from "./components/ResultTable"
-import type { UIState, ValidatedData } from "./types"
+import DataEntry from "./components/DataEntry"
+import ErrorDisplay from "./components/ErrorDisplay"
+import HelpGuide from "./components/HelpGuide"
+import ResultTable from "./components/ResultTable"
+import type { TaskEntry, UIState } from "./types"
 
 function App() {
   const [uiState, setUIState] = useState<UIState>("input")
 
   const [inputText, setInputText] = useState<string>("")
-  const [errorText, _setErrorText] = useState<string>("")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [errorText, setErrorText] = useState<string>("")
 
-  const [validatedData, setValidatedData] = useState<ValidatedData | null>(null)
+  const [tasks, setTasks] = useState<TaskEntry[] | null>(null)
 
   const pageContents = useMemo((): React.JSX.Element | null => {
     switch (uiState) {
@@ -23,7 +24,7 @@ function App() {
             setUIState={setUIState}
             inputText={inputText}
             setInputText={setInputText}
-            setValidatedData={setValidatedData}
+            setTasks={setTasks}
           />
         )
       case "help":
@@ -31,18 +32,11 @@ function App() {
       case "error":
         return <ErrorDisplay message={errorText} />
       case "result":
-        return (
-          validatedData && (
-            <ResultTable
-              validatedData={validatedData}
-              onReturnToInput={() => setUIState("input")}
-            />
-          )
-        )
+        return tasks && <ResultTable tasks={tasks} onReturnToInput={() => setUIState("input")} />
       default:
         return null
     }
-  }, [uiState, inputText, errorText, validatedData])
+  }, [uiState, inputText, errorText, tasks])
 
   return (
     <>
